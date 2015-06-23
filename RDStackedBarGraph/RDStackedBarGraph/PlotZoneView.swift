@@ -9,7 +9,6 @@
 import UIKit
 
 class PlotZoneView: UIView {
-    var barWidth = CGFloat(60)
     var barSpacing = 20
     var leftPadding = CGFloat(40)
     var rightPadding = CGFloat(40)
@@ -26,7 +25,10 @@ class PlotZoneView: UIView {
         super.layoutSubviews()
         if let bars = bars {
             
-            let totalWidth = barWidth * CGFloat(bars.count)
+            //TODO: Should do this reduce more efficiently
+            let totalWidth = bars.reduce(0) {
+                return $0 + $1.width
+            }
             var xPosition = leftPadding
             let height = bounds.size.height
             //TODO: Need to enforce a minimum padding by shrinking the bar width if it goes over
@@ -35,10 +37,10 @@ class PlotZoneView: UIView {
             var xAxisLabels = [XAxisLabel]()
             for bar in bars {
                 let barHeight = bar.totalValue() / maxBarValue * height
-                let stackedBar = StackedBar(frame: CGRect(x: xPosition, y: height - barHeight, width: barWidth, height: barHeight), segments: bar.segments)
+                let stackedBar = StackedBar(frame: CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight), segments: bar.segments)
                 
                 addSubview(stackedBar)
-                xPosition += padding + barWidth
+                xPosition += padding + bar.width
             }
         }
     }

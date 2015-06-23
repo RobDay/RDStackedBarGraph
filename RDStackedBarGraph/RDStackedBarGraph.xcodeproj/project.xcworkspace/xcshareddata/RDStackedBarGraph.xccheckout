@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FEC6A4A7-3FEB-48A2-A562-927023C5B703</string>
+	<key>IDESourceControlProjectName</key>
+	<string>RDStackedBarGraph</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>F55AC23602EFBD0625C015FC25303A925C79FF96</key>
+		<string>https://github.com/RobDay/RDStackedBarGraph.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>RDStackedBarGraph/RDStackedBarGraph.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>F55AC23602EFBD0625C015FC25303A925C79FF96</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/RobDay/RDStackedBarGraph.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>F55AC23602EFBD0625C015FC25303A925C79FF96</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F55AC23602EFBD0625C015FC25303A925C79FF96</string>
+			<key>IDESourceControlWCCName</key>
+			<string>StackedBar</string>
+		</dict>
+	</array>
+</dict>
+</plist>
