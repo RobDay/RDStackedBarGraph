@@ -8,7 +8,7 @@
 
 import UIKit
 
-class StackedBar: UIView {
+class StackedBarView: UIView {
     
     var cornerRadius: CGFloat = 0
     

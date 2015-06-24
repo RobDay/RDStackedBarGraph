@@ -54,7 +54,6 @@ import RDStackedBarGraph
     }
 }
 
-
 let myTestDatasource = TestDatasource()
 let testGraph = GraphView(frame: CGRect(x: 0, y: 0, width: 700, height: 500))
 testGraph.datasource = myTestDatasource
@@ -68,9 +67,8 @@ testGraph.xAxisTopPadding = 30
 testGraph.xAxisTopMargin = 20 //Rename
 testGraph.barWidth = 60
 
-testGraph.backgroundColor = UIColor.whiteColor()
 
-
+//testGraph.backgroundColor = UIColor.whiteColor()
 
 testGraph.setNeedsLayout()
 

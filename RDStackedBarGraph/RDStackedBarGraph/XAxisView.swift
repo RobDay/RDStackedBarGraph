@@ -40,7 +40,22 @@ public class XAxisView : UIView {
                 label.sizeToFit()
                 let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
                 label.center = labelCenter
-                //TODO: Clean this up
+                
+                if CGRectContainsRect(self.bounds, label.frame) {
+                    if let myPreviousLabelPosition = previousLabelPosition {
+                        //If the frames don't intersect, add the label
+                        if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) {
+                                addSubview(label)
+                                previousLabelPosition = label.frame
+                        }
+                    } else {
+                        addSubview(label)
+                        previousLabelPosition = label.frame
+                    }
+
+                }
+                
+                
                 if let myPreviousLabelPosition = previousLabelPosition {
                     //If the frames don't intersect, add the label
                     if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) &&
