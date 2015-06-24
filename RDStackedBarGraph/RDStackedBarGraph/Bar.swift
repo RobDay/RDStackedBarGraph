@@ -12,10 +12,12 @@ struct Bar {
     let segments: [BarSegment]
     let width: CGFloat
     var label: String?
+    var xAxisPosition: CGFloat
     
-    init(segments: [BarSegment], width: CGFloat) {
+    init(segments: [BarSegment], width: CGFloat, xAxisPosition: CGFloat) {
         self.segments = segments
         self.width = width
+        self.xAxisPosition = xAxisPosition
     }
     
     

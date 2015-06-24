@@ -14,44 +14,8 @@ struct XAxisLabel {
 }
 
 public class XAxisView : UIView {
-    public var font = UIFont.systemFontOfSize(12)
-    public var textColor = UIColor.blackColor()
-    
-    public var borderInset : CGFloat = 0
-    
-    public var topBorderWidth: CGFloat = 1.0
-    public var topBorderColor = UIColor.grayColor()
-    public var topBorder = false {
-        didSet {
-            println("Drawing border")
-            addBorder(.Top, color: topBorderColor, width: topBorderWidth, inset: borderInset)
-        }
-    }
-    
-    public var bottomBorderWidth: CGFloat = 1.0
-    public var bottomBorderColor = UIColor.grayColor()
-    public var bottomBorder = false {
-        didSet {
-            addBorder(.Bottom, color: bottomBorderColor, width: bottomBorderWidth, inset: borderInset)
-        }
-    }
-    
-    public var leftBorderWidth: CGFloat = 1.0
-    public var leftBorderColor = UIColor.grayColor()
-    public var leftBorder = false {
-        didSet {
-            addBorder(.Left, color: leftBorderColor, width: leftBorderWidth, inset: borderInset)
-        }
-    }
-    
-    public var rightBorderWidth: CGFloat = 1.0
-    public var rightBorderColor = UIColor.grayColor()
-    public var rightBorder = false {
-        didSet {
-            addBorder(.Right, color: rightBorderColor, width: rightBorderWidth, inset: borderInset)
-        }
-    }
-    
+    var font = UIFont.systemFontOfSize(12)
+    var textColor = UIColor.blackColor()
     
     var axisLabels : [XAxisLabel]? {
         didSet {
@@ -98,13 +62,11 @@ public class XAxisView : UIView {
     
     override public func sizeThatFits(size: CGSize) -> CGSize {
         layoutIfNeeded()
-//        println("Font is \(font)")
         var size: CGSize = CGSizeZero
         for label in labels {
             let labelSize = label.bounds.size
             size = size.height > labelSize.height ? size : labelSize
         }
-//        println("Size is \(size)")
         return CGSize(width: bounds.size.width, height: size.height)
     }
 }

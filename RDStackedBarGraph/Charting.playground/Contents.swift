@@ -48,6 +48,10 @@ import RDStackedBarGraph
 //        return CGFloat(arc4random_uniform(40) + 1)
         return CGFloat(40)
     }
+    
+    func graphView(graphView: GraphView, labelForBarAtIndex barIndex: Int) -> String {
+        return "Label \(barIndex)"
+    }
 }
 
 
@@ -56,21 +60,17 @@ let testGraph = GraphView(frame: CGRect(x: 0, y: 0, width: 700, height: 500))
 testGraph.datasource = myTestDatasource
 
 
-
 print("HI")
+testGraph.setNeedsLayout()
 
-
-//testGraph.xAxisView.topBorderColor = UIColor.lightGrayColor()
-//testGraph.xAxisView.topBorderWidth = 1.0
-//testGraph.xAxisView.borderInset = 20.0
-//testGraph.xAxisView.topBorder = true
-testGraph.xAxisTopPadding = 10
-testGraph.xAxisOffset = 10
-//testGraph.barWidth
+testGraph.xAxisView.addBorder(.Top, color: UIColor.lightGrayColor(), width: 1.0, inset: 20.0)
+testGraph.xAxisTopPadding = 30
+testGraph.xAxisTopMargin = 20 //Rename
 testGraph.barWidth = 60
 
-
 testGraph.backgroundColor = UIColor.whiteColor()
+
+
 
 testGraph.setNeedsLayout()
 

@@ -10,8 +10,10 @@ import UIKit
 
 class StackedBar: UIView {
     
-    var segments: [BarSegment]!
-    var segmentTotal : CGFloat {
+    var cornerRadius: CGFloat = 0
+    
+    private var segments: [BarSegment]!
+    private var segmentTotal : CGFloat {
         return segments.reduce(0) {
             $0 + $1.value
         }
@@ -20,13 +22,13 @@ class StackedBar: UIView {
     convenience init(frame: CGRect, segments: [BarSegment]) {
         self.init(frame: frame)
         self.segments = segments
-        layer.cornerRadius = 5.0
+
         clipsToBounds = true
     }
     
     override func drawRect(rect: CGRect) {
         super.drawRect(rect)
-        
+        layer.cornerRadius = cornerRadius
         var runningTotal = CGFloat(0)
         let total = segmentTotal
         //        print("Total is \(total)\n")

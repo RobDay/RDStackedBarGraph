@@ -14,6 +14,7 @@ class PlotZoneView: UIView {
     var rightPadding = CGFloat(40)
     var maxBarValue: CGFloat!
     var bars: [Bar]!
+    var barCornerRadius: CGFloat = 0
     
     required convenience init(frame: CGRect, bars: [Bar], maxBarValue: CGFloat) {
         self.init(frame:frame)
@@ -38,7 +39,7 @@ class PlotZoneView: UIView {
             for bar in bars {
                 let barHeight = bar.totalValue() / maxBarValue * height
                 let stackedBar = StackedBar(frame: CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight), segments: bar.segments)
-                
+                stackedBar.cornerRadius = barCornerRadius
                 addSubview(stackedBar)
                 xPosition += padding + bar.width
             }
