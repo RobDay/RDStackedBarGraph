@@ -20,8 +20,8 @@ public class GraphView: UIView {
     
     public var barWidth = CGFloat(60)
     public var barSpacing = 20
-    public var leftPadding = CGFloat(40)
-    public var rightPadding = CGFloat(40)
+    public var leftPadding = CGFloat(0)
+    public var rightPadding = CGFloat(0)
     public var xAxisTopMargin = CGFloat(0)
     public var xAxisTopPadding = CGFloat(0)
     
@@ -32,7 +32,12 @@ public class GraphView: UIView {
     public var barCornerRadius: CGFloat = 10
     
     
-    public weak var datasource: GraphDatasourceProtocol?
+    public weak var datasource: GraphDatasourceProtocol? {
+        didSet {
+            self.setNeedsLayout()
+            self.layoutIfNeeded()
+        }
+    }
     
     override public func layoutSubviews() {
         super.layoutSubviews()
