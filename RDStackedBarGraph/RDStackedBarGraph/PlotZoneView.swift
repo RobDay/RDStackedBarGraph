@@ -33,7 +33,7 @@ class PlotZoneView: UIView {
             let height = bounds.size.height
             
             for bar in bars {
-                let barHeight = bar.totalValue() / maxBarValue * height
+                let barHeight = maxBarValue > 0 ? bar.totalValue() / maxBarValue * height : 0.0
                 //TODO: the x position should not be a hacked calculation
                 let stackedBar = StackedBarView(frame: CGRect(x: bar.xAxisPosition - (bar.width / 2), y: height - barHeight, width: bar.width, height: barHeight), segments: bar.segments)
                 stackedBar.cornerRadius = barCornerRadius
