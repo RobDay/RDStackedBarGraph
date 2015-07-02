@@ -51,11 +51,11 @@ public class GraphView: UIView {
             var maxBarValue = CGFloat(0)
             var bars = [Bar]()
             
-            
-            
-            var xPosition = leftPadding + barWidth / 2
-            let totalWidth = barWidth * CGFloat(totalBars)
-            let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(totalBars - 1 > 0 ? totalBars - 1 : 1)
+            let totalWidth = barWidth * CGFloat(totalBars)            
+            let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(totalBars + 1)
+            var xPosition = leftPadding + padding + barWidth / 2
+
+
             var xAxisLabels = [XAxisLabel]()
             
             
