@@ -11,4 +11,8 @@ import Foundation
 public struct BarSegment {
     public let color: UIColor
     public let value: CGFloat
+    public init(color: UIColor, value: CGFloat) {
+        self.color = color
+        self.value = value
+    }
 }
