@@ -73,7 +73,7 @@ public class GraphView: UIView {
                     segments.append(segment)
                 }
                 
-                var bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
+                let bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
                 bars.append(bar)
                 
                 if let barLabel = datasource.graphView?(self, labelForBarAtIndex: barIndex) {
