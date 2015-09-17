@@ -26,7 +26,7 @@ public class XAxisView : UIView {
     
     override public func layoutSubviews() {
         if let axisLabels = axisLabels {
-            subviews.map({ $0.removeFromSuperview() })
+            subviews.forEach({ $0.removeFromSuperview() })
             labels.removeAll(keepCapacity: true)
             var previousLabelPosition: CGRect?
             let centerY = bounds.size.height / 2

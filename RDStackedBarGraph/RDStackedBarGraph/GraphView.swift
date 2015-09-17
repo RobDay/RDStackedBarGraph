@@ -42,7 +42,8 @@ public class GraphView: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         if let datasource = datasource {
-            subviews.map({ $0.removeFromSuperview() })
+
+            subviews.forEach({ $0.removeFromSuperview() })
 
             /*
             Collect data from the datasource and populate a local model to pass around

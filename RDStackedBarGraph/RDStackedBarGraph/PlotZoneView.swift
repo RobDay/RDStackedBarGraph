@@ -25,11 +25,6 @@ class PlotZoneView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         if let bars = bars {
-            
-            let totalWidth = bars.reduce(0) {
-                return $0 + $1.width
-            }
-            var xPosition = leftPadding
             let height = bounds.size.height
             
             for bar in bars {
