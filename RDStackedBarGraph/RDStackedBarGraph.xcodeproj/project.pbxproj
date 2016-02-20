@@ -12,7 +12,7 @@
 		EB7D5DA11B38F080008C2E05 /* RDStackedBarGraphTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DA01B38F080008C2E05 /* RDStackedBarGraphTests.swift */; };
 		EB7D5DAB1B38F0CB008C2E05 /* BarSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DAA1B38F0CB008C2E05 /* BarSegment.swift */; };
 		EB7D5DAD1B38F0E3008C2E05 /* Bar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DAC1B38F0E3008C2E05 /* Bar.swift */; };
-		EB7D5DAF1B38F151008C2E05 /* StackedBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DAE1B38F151008C2E05 /* StackedBar.swift */; };
+		EB7D5DAF1B38F151008C2E05 /* StackedBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DAE1B38F151008C2E05 /* StackedBarView.swift */; };
 		EB7D5DB11B38F15F008C2E05 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DB01B38F15F008C2E05 /* GraphView.swift */; };
 		EB7D5DB31B38F174008C2E05 /* PlotZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DB21B38F174008C2E05 /* PlotZoneView.swift */; };
 		EB7D5DB71B38F193008C2E05 /* XAxisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7D5DB61B38F193008C2E05 /* XAxisView.swift */; };
@@ -38,7 +38,7 @@
 		EB7D5DA01B38F080008C2E05 /* RDStackedBarGraphTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RDStackedBarGraphTests.swift; sourceTree = "<group>"; };
 		EB7D5DAA1B38F0CB008C2E05 /* BarSegment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarSegment.swift; sourceTree = "<group>"; };
 		EB7D5DAC1B38F0E3008C2E05 /* Bar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bar.swift; sourceTree = "<group>"; };
-		EB7D5DAE1B38F151008C2E05 /* StackedBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackedBar.swift; sourceTree = "<group>"; };
+		EB7D5DAE1B38F151008C2E05 /* StackedBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackedBarView.swift; sourceTree = "<group>"; };
 		EB7D5DB01B38F15F008C2E05 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		EB7D5DB21B38F174008C2E05 /* PlotZoneView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlotZoneView.swift; sourceTree = "<group>"; };
 		EB7D5DB61B38F193008C2E05 /* XAxisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XAxisView.swift; sourceTree = "<group>"; };
@@ -91,7 +91,7 @@
 				EB7D5D911B38F080008C2E05 /* Supporting Files */,
 				EB7D5DAA1B38F0CB008C2E05 /* BarSegment.swift */,
 				EB7D5DAC1B38F0E3008C2E05 /* Bar.swift */,
-				EB7D5DAE1B38F151008C2E05 /* StackedBar.swift */,
+				EB7D5DAE1B38F151008C2E05 /* StackedBarView.swift */,
 				EB7D5DB01B38F15F008C2E05 /* GraphView.swift */,
 				EB7D5DB21B38F174008C2E05 /* PlotZoneView.swift */,
 				EB7D5DB61B38F193008C2E05 /* XAxisView.swift */,
@@ -235,7 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB7D5DB11B38F15F008C2E05 /* GraphView.swift in Sources */,
-				EB7D5DAF1B38F151008C2E05 /* StackedBar.swift in Sources */,
+				EB7D5DAF1B38F151008C2E05 /* StackedBarView.swift in Sources */,
 				EB7D5DAB1B38F0CB008C2E05 /* BarSegment.swift in Sources */,
 				EB7D5DB31B38F174008C2E05 /* PlotZoneView.swift in Sources */,
 				EB7D5DB71B38F193008C2E05 /* XAxisView.swift in Sources */,
