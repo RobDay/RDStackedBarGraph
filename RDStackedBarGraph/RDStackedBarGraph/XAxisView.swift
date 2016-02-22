@@ -32,6 +32,7 @@ public class XAxisView : UIView {
             let centerY = bounds.size.height / 2
             for axisLabel in axisLabels {
                 let label = UILabel()
+                label.numberOfLines = 0
                 label.font = font
                 label.textColor = textColor
                 
