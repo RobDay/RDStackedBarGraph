@@ -8,7 +8,11 @@
 
 import Foundation
 
-struct Bar {
+struct Bar: Hashable {
+    var hashValue: Int {
+        //TODO: Come up with a better hash value
+        return totalValue().hashValue
+    }
     let segments: [BarSegment]
     let width: CGFloat
     let xAxisPosition: CGFloat
@@ -24,5 +28,16 @@ struct Bar {
         return segments.reduce(0) {
             return $0 + $1.value
         }
+    }
+    
+}
+
+func ==(lhs: Bar, rhs: Bar) -> Bool {
+    if lhs.segments == rhs.segments &&
+        lhs.width == rhs.width &&
+        lhs.xAxisPosition == rhs.xAxisPosition {
+            return true
+    } else {
+        return false
     }
 }

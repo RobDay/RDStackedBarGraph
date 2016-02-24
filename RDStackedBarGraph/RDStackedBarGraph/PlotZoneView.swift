@@ -31,6 +31,10 @@ class PlotZoneView: UIView {
         }
     }
     
+    private var barToBarViews = [Bar: StackedBarView]()
+    private var stackedBarViewQueue = [StackedBarView]()
+    
+    
     required convenience init(frame: CGRect, bars: [Bar], maxBarValue: CGFloat) {
         self.init(frame:frame)
         self.bars = bars
@@ -41,7 +45,7 @@ class PlotZoneView: UIView {
         clipsToBounds = true
         super.layoutSubviews()
         guard let bars = bars else { return }
-        subviews.forEach({ $0.removeFromSuperview() })
+//        subviews.forEach({ $0.removeFromSuperview() })
         
         let height = bounds.size.height
         
@@ -50,11 +54,34 @@ class PlotZoneView: UIView {
         
         
         let currentOffset = initialOffset - offset
-        print("Current offset is \(currentOffset)")
-        print("Initial offset is \(initialOffset)")
-        print("Offset is \(offset)")
-        let currentBars = visibleBarsForOffset(currentOffset)
-        for bar in currentBars {
+//        print("Current offset is \(currentOffset)")
+//        print("Initial offset is \(initialOffset)")
+//        print("Offset is \(offset)")
+        let newVisibleBars = visibleBarsForOffset(currentOffset)
+        
+        
+        
+        let newVisibleBarsSet = Set(newVisibleBars)
+        let existingBars = Set(barToBarViews.keys)
+        
+        let removedBars = existingBars.subtract(newVisibleBarsSet)
+        for bar in removedBars {
+            // Get the stackedBarView, removeFromSuperview, add back to queue
+            if let stackedBarView = barToBarViews[bar] {
+                stackedBarView.removeFromSuperview()
+                stackedBarViewQueue.append(stackedBarView)
+                barToBarViews.removeValueForKey(bar)
+            } else {
+                assertionFailure("Should never get here.  Should always have tracked view")
+            }
+            
+        }
+        
+        
+        
+        
+        for bar in newVisibleBars {
+            
             let barHeight = maxBarValue > 0 ? bar.totalValue() / maxBarValue * height : 0.0
             
             
@@ -66,11 +93,40 @@ class PlotZoneView: UIView {
             
             let barFrame = CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight)
             
-            let stackedBarView = StackedBarView(frame: barFrame, segments: bar.segments)
+//            let stackedBarView = StackedBarView(frame: barFrame, segments: bar.segments)
+            let stackedBarView: StackedBarView
+            if let existingStackedBarView = barToBarViews[bar] {
+                stackedBarView = existingStackedBarView
+                stackedBarView.frame = barFrame
+//                stackedBarView.segments = bar.segments
+            } else {
+                stackedBarView = dequeueStackedBarWithFrame(barFrame, segments: bar.segments)
+                barToBarViews[bar] = stackedBarView
+                addSubview(stackedBarView)
+            }
+//            if stackedBarView.superview == nil {
+//                addSubview(stackedBarView)
+//            }
+            
             stackedBarView.cornerRadius = barCornerRadius
-            addSubview(stackedBarView)
         }
 
+    }
+    
+    private func dequeueStackedBarWithFrame(frame: CGRect, segments: [BarSegment]) -> StackedBarView {
+        // This should probably sync?
+        
+        let stackedBarView : StackedBarView
+        if stackedBarViewQueue.count > 0 {
+            stackedBarView = stackedBarViewQueue.removeFirst()
+        } else {
+            stackedBarView = StackedBarView()
+        }
+        
+        stackedBarView.frame = frame
+        stackedBarView.segments = segments
+        return stackedBarView
+        
     }
     
     private func visibleBarsForOffset(currentOffset: CGFloat) -> [Bar] {
@@ -84,8 +140,7 @@ class PlotZoneView: UIView {
         let minVisibleXAxisPosition = 0 + currentOffset - (barWidth / 2)
         
         let maxVisibleXAxisPosition = bounds.size.width + currentOffset + (barWidth / 2)
-        
-//        var newBars = [Bar]()
+    
         
         let newBars = bars.filter {
             return $0.xAxisPosition > minVisibleXAxisPosition && $0.xAxisPosition < maxVisibleXAxisPosition

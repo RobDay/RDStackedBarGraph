@@ -12,7 +12,11 @@ class StackedBarView: UIView {
     
     var cornerRadius: CGFloat = 0
     
-    private var segments: [BarSegment]!
+    var segments: [BarSegment]! {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
     private var segmentTotal : CGFloat {
         return segments.reduce(0) {
             $0 + $1.value

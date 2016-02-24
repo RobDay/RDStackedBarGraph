@@ -63,92 +63,90 @@ public class GraphView: UIScrollView {
             // we remove all subviews each layout
         
         
-   
+        guard let datasource = datasource else { return }
         
         
         
-        if let datasource = datasource {
 
-            subviews.forEach({ $0.removeFromSuperview() })
+//        subviews.forEach({ $0.removeFromSuperview() })
 
-            /*
-            Collect data from the datasource and populate a local model to pass around
-            */
-            let totalBars = datasource.numberOfBarsInGraphView(self)
-            var maxBarValue = CGFloat(0)
-            var bars = [Bar]()
+        /*
+        Collect data from the datasource and populate a local model to pass around
+        */
+        let totalBars = datasource.numberOfBarsInGraphView(self)
+        var maxBarValue = CGFloat(0)
+        var bars = [Bar]()
+        
+        let visibleBars = min(totalBars, maxVisibleBars)
+        
+        let totalWidth = barWidth * CGFloat(visibleBars)
+        
+        
+        let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
+        
+        var blah : CGFloat = 0
+//            print("Bounds is \(bounds)")
+        if !initialLaunchComplete {
             
-            let visibleBars = min(totalBars, maxVisibleBars)
+            let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + barWidth
             
-            let totalWidth = barWidth * CGFloat(visibleBars)
+            var size = bounds.size
+            size.width = cumumlativeWidth
+            contentSize = size
+            initialLaunchComplete = true
+            self.showsHorizontalScrollIndicator = true
+            self.showsVerticalScrollIndicator = true
+            print("Setting offset")
             
-            
-            let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
-            
-            var blah : CGFloat = 0
-            print("Bounds is \(bounds)")
-            if !initialLaunchComplete {
-                
-                let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + barWidth
-                
-                var size = bounds.size
-                size.width = cumumlativeWidth
-                contentSize = size
-                initialLaunchComplete = true
-                self.showsHorizontalScrollIndicator = true
-                self.showsVerticalScrollIndicator = true
-                print("Setting offset")
-                
-                blah = cumumlativeWidth - bounds.width
-                contentOffset.x = blah
-                plotZone.initialOffset = contentOffset.x
-                
-            }
-
-            
-            
-            
-            var xPosition = leftPadding + padding + barWidth / 2
-            //TODO: Come back here to account for initial offset
-            xPosition -= blah
-
-
-            var xAxisLabels = [XAxisLabel]()
-            
-            
-            for barIndex in 0..<totalBars {
-                let totalSegments = datasource.graphView(self, numberOfSegmentsInBarAtIndex: barIndex)
-                var barTotalValue = CGFloat(0)
-                var segments = [BarSegment]()
-                
-                //Gather the segments that make up the bar
-                for segmentIndex in 0..<totalSegments {
-                    let value = datasource.graphView(self, valueForSegmentAtIndex: segmentIndex, inBarWithIndex: barIndex)
-                    barTotalValue += value
-                    let color = datasource.graphView(self, colorForSegmentAtIndex: segmentIndex, inBarWithIndex: barIndex)
-                    let segment = BarSegment(color: color, value: value)
-                    segments.append(segment)
-                }
-                
-                let bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
-                bars.append(bar)
-                
-                if let barLabel = datasource.graphView?(self, labelForBarAtIndex: barIndex) {
-                    let axisLabel = XAxisLabel(text: barLabel, xPosition: xPosition)
-                    xAxisLabels.append(axisLabel)
-                }
-
-                maxBarValue = max(maxBarValue, barTotalValue)
-                xPosition += padding + barWidth
-            }
-            
-            
-            setupXAxisWithAxisLabel(xAxisLabels)
-            let xAxisHeight = xAxisView.bounds.size.height
-            let plotZoneFrame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height - xAxisHeight - xAxisTopMargin)
-            setupPlotZoneWithBars(bars, frame: plotZoneFrame, maxBarValue: maxBarValue)
+            blah = cumumlativeWidth - bounds.width
+            contentOffset.x = blah
+            plotZone.initialOffset = contentOffset.x
             
         }
+
+        
+        
+        
+        var xPosition = leftPadding + padding + barWidth / 2
+        //TODO: Come back here to account for initial offset
+        xPosition -= blah
+
+
+        var xAxisLabels = [XAxisLabel]()
+        
+        
+        for barIndex in 0..<totalBars {
+            let totalSegments = datasource.graphView(self, numberOfSegmentsInBarAtIndex: barIndex)
+            var barTotalValue = CGFloat(0)
+            var segments = [BarSegment]()
+            
+            //Gather the segments that make up the bar
+            for segmentIndex in 0..<totalSegments {
+                let value = datasource.graphView(self, valueForSegmentAtIndex: segmentIndex, inBarWithIndex: barIndex)
+                barTotalValue += value
+                let color = datasource.graphView(self, colorForSegmentAtIndex: segmentIndex, inBarWithIndex: barIndex)
+                let segment = BarSegment(color: color, value: value)
+                segments.append(segment)
+            }
+            
+            let bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
+            bars.append(bar)
+            
+            if let barLabel = datasource.graphView?(self, labelForBarAtIndex: barIndex) {
+                let axisLabel = XAxisLabel(text: barLabel, xPosition: xPosition)
+                xAxisLabels.append(axisLabel)
+            }
+
+            maxBarValue = max(maxBarValue, barTotalValue)
+            xPosition += padding + barWidth
+        }
+        
+        
+        setupXAxisWithAxisLabel(xAxisLabels)
+        let xAxisHeight = xAxisView.bounds.size.height
+        let plotZoneFrame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height - xAxisHeight - xAxisTopMargin)
+        setupPlotZoneWithBars(bars, frame: plotZoneFrame, maxBarValue: maxBarValue)
+        
     }
     
     func setupXAxisWithAxisLabel(axisLabels: [XAxisLabel]) {
@@ -163,7 +161,9 @@ public class GraphView: UIScrollView {
         
         let newXAxisFrame = CGRect(x: 0, y: bounds.size.height - xAxisHeight, width: bounds.size.width, height: xAxisHeight)
         xAxisView.frame = newXAxisFrame
-        addSubview(xAxisView)
+        if xAxisView.superview == nil {
+            addSubview(xAxisView)   
+        }
     }
     
     func setupPlotZoneWithBars(bars: [Bar], frame: CGRect, maxBarValue: CGFloat) {
@@ -175,11 +175,8 @@ public class GraphView: UIScrollView {
     
         var newFrame = frame
         newFrame.origin.x = contentOffset.x
-//        if plotZone.frame == CGRectZero {
+        
             plotZone.frame = newFrame
-//        }
-//        plotZone = PlotZoneView()
-        plotZone.backgroundColor = .greenColor()
             plotZone.bars = bars
             plotZone.maxBarValue = maxBarValue
             plotZone.barCornerRadius = barCornerRadius
@@ -195,17 +192,17 @@ public class GraphView: UIScrollView {
     
     
 
-    override public var contentOffset: CGPoint {
-        didSet {
-        print("Offset is \(contentOffset)")
-            var frame = plotZone.frame
-            frame.origin.x = contentOffset.x
-//            plotZone.frame = frame
-        
-//            print("Frame is \(plotZone.frame)")
-
-        }
-    }
+//    override public var contentOffset: CGPoint {
+//        didSet {
+////        print("Offset is \(contentOffset)")
+//            var frame = plotZone.frame
+//            frame.origin.x = contentOffset.x
+////            plotZone.frame = frame
+//        
+////            print("Frame is \(plotZone.frame)")
+//
+//        }
+//    }
     
 }
 
