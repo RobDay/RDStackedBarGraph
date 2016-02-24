@@ -8,11 +8,15 @@
 
 import Foundation
 
-public struct BarSegment {
+public struct BarSegment: Equatable {
     public let color: UIColor
     public let value: CGFloat
     public init(color: UIColor, value: CGFloat) {
         self.color = color
         self.value = value
     }
+}
+
+public func ==(lhs: BarSegment, rhs: BarSegment) -> Bool {
+    return lhs.color == rhs.color && lhs.value == rhs.value
 }
