@@ -42,25 +42,20 @@ class PlotZoneView: UIView {
     }
     
     override func layoutSubviews() {
+        guard bars != nil else { return }
         clipsToBounds = true
         super.layoutSubviews()
-        guard let bars = bars else { return }
-//        subviews.forEach({ $0.removeFromSuperview() })
+
         
         let height = bounds.size.height
-        
-        //TODO: Does abs here make sense
-        //TODO: May need to allow this negative
-        
-        
         let currentOffset = initialOffset - offset
 //        print("Current offset is \(currentOffset)")
 //        print("Initial offset is \(initialOffset)")
 //        print("Offset is \(offset)")
+        
+        
+        
         let newVisibleBars = visibleBarsForOffset(currentOffset)
-        
-        
-        
         let newVisibleBarsSet = Set(newVisibleBars)
         let existingBars = Set(barToBarViews.keys)
         
@@ -78,8 +73,6 @@ class PlotZoneView: UIView {
         }
         
         
-        
-        
         for bar in newVisibleBars {
             
             let barHeight = maxBarValue > 0 ? bar.totalValue() / maxBarValue * height : 0.0
@@ -93,27 +86,24 @@ class PlotZoneView: UIView {
             
             let barFrame = CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight)
             
-//            let stackedBarView = StackedBarView(frame: barFrame, segments: bar.segments)
             let stackedBarView: StackedBarView
             if let existingStackedBarView = barToBarViews[bar] {
                 stackedBarView = existingStackedBarView
                 stackedBarView.frame = barFrame
-//                stackedBarView.segments = bar.segments
             } else {
-                stackedBarView = dequeueStackedBarWithFrame(barFrame, segments: bar.segments)
+                stackedBarView = dequeueStackedBarWithFrame()
+                
+                stackedBarView.frame = barFrame
+                stackedBarView.segments = bar.segments
                 barToBarViews[bar] = stackedBarView
                 addSubview(stackedBarView)
             }
-//            if stackedBarView.superview == nil {
-//                addSubview(stackedBarView)
-//            }
-            
-            stackedBarView.cornerRadius = barCornerRadius
         }
 
     }
     
-    private func dequeueStackedBarWithFrame(frame: CGRect, segments: [BarSegment]) -> StackedBarView {
+    
+    private func dequeueStackedBarWithFrame() -> StackedBarView {
         // This should probably sync?
         
         let stackedBarView : StackedBarView
@@ -121,33 +111,24 @@ class PlotZoneView: UIView {
             stackedBarView = stackedBarViewQueue.removeFirst()
         } else {
             stackedBarView = StackedBarView()
+            stackedBarView.cornerRadius = barCornerRadius
+            
         }
-        
-        stackedBarView.frame = frame
-        stackedBarView.segments = segments
         return stackedBarView
         
     }
     
     private func visibleBarsForOffset(currentOffset: CGFloat) -> [Bar] {
-        //After this is called, even if the same bars are visible, the bars need to be shifted based on the offset
-        //Perhaps this can be implemented by subtracting (or omdifying if that doesn't make sense) all of the x positions by the offset.  Then, whatver is in range of my bounds is drawn
-            //IN range of bounds means any part of it visible
-        //This should also potentially reuse bars that have fallen off the scrolling area.  This would stop the churn of adding and removing bars over and over again
-        
-        //That said, we'd need to keep a mapping of bars to barViews
+
         let barWidth = bars[0].width
         let minVisibleXAxisPosition = 0 + currentOffset - (barWidth / 2)
         
         let maxVisibleXAxisPosition = bounds.size.width + currentOffset + (barWidth / 2)
-    
-        
         let newBars = bars.filter {
             return $0.xAxisPosition > minVisibleXAxisPosition && $0.xAxisPosition < maxVisibleXAxisPosition
         }
         
         
-//        let newBars = bars[bars.count - 7..<bars.count]
         return Array(newBars)
     }
 }
