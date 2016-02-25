@@ -8,31 +8,40 @@
 
 import UIKit
 
-struct XAxisLabel {
+struct XAxisLabel: Hashable {
+    var hashValue: Int {
+        return text.hashValue ^ xPosition.hashValue
+    }
     let text: String
     let xPosition: CGFloat
 }
+
+func ==(lhs: XAxisLabel, rhs: XAxisLabel) -> Bool {
+    return lhs.text == rhs.text && lhs.xPosition == rhs.xPosition
+}
+
 
 public class XAxisView : UIView {
     var font = UIFont.systemFontOfSize(12)
     var textColor = UIColor.blackColor()
     
+    var maxVisibleLabels = 7 //TODO: Centralize this
     
-    var labelSizes : [CGRect]!
-    var axisLabels : [XAxisLabel]? {
+    var labelSizes : [XAxisLabel: CGRect]!
+    var maxLabelHeight : CGFloat = 0
+    var offset: CGFloat = 0
+    var axisLabels : [XAxisLabel]! {
         didSet {
             guard let axisLabels = axisLabels else { return }
-            setNeedsLayout()
-        }
-    }
-    private var labels = [UILabel]()
-    
-    override public func layoutSubviews() {
-        if let axisLabels = axisLabels {
-            subviews.forEach({ $0.removeFromSuperview() })
-            labels.removeAll(keepCapacity: true)
-            var previousLabelPosition: CGRect?
-            let centerY = bounds.size.height / 2
+            if let oldValue = oldValue {
+                if oldValue == axisLabels {
+                    return
+                }
+            }
+            
+            labelSizes = [XAxisLabel: CGRect]()
+            
+            maxLabelHeight = 0
             for axisLabel in axisLabels {
                 let label = UILabel()
                 label.textAlignment = .Center
@@ -41,52 +50,127 @@ public class XAxisView : UIView {
                 label.textColor = textColor
                 
                 label.text = axisLabel.text
-                
                 label.sizeToFit()
-                let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
-                label.center = labelCenter
-                
-                if CGRectContainsRect(self.bounds, label.frame) {
-                    if let myPreviousLabelPosition = previousLabelPosition {
-                        //If the frames don't intersect, add the label
-                        if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) {
-                                addSubview(label)
-                                previousLabelPosition = label.frame
-                        }
-                    } else {
-                        addSubview(label)
-                        previousLabelPosition = label.frame
-                    }
+                labelSizes[axisLabel] = label.frame
+                if label.bounds.size.height > maxLabelHeight {
+                    maxLabelHeight = label.bounds.size.height
+                }
+            }
+            setNeedsLayout()
+        }
+    }
+    private var axisLabelToLabel = [XAxisLabel: UILabel]()
+    
+    private var labelQueue = [UILabel]()
+//    You are now goiunug to make this dequeue and requeue labels
+//    also have ot make it shift them based on the offset
+//    perhaps it's better for graph view to mutate the xAxisPositions instead of having this
+//    be responsible....it keeps that nonsense hiddden out of these classes'
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+        guard let axisLabels = axisLabels else { return }
 
-                }
-                
-                
-                if let myPreviousLabelPosition = previousLabelPosition {
-                    //If the frames don't intersect, add the label
-                    if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) &&
-                        CGRectContainsRect(self.bounds, label.frame) {
-                        addSubview(label)
-                        previousLabelPosition = label.frame
-                    }
-                } else {
-                    if CGRectContainsRect(self.bounds, label.frame) {
-                        addSubview(label)
-                        previousLabelPosition = label.frame
-                    }
-                }
-                labels.append(label)
-                
+        let existingLabels = Set (axisLabelToLabel.keys)
+        let newVisibleLabels = visibleLabelsForOffset(offset)
+        let newVisibleLabelsSet = Set(newVisibleLabels)
+        
+        let removedLabels = existingLabels.subtract(newVisibleLabelsSet)
+        
+        for axisLabel in removedLabels {
+            if let label = axisLabelToLabel[axisLabel] {
+                label.removeFromSuperview()
+                labelQueue.append(label)
+                axisLabelToLabel.removeValueForKey(axisLabel)
+            } else {
+                assertionFailure("Should never get here.  Should always have tracked label")
             }
         }
+        
+        
+
+        var previousLabelPosition: CGRect?
+        for axisLabel in newVisibleLabels {
+            
+            let label: UILabel
+            if let existingLabel = axisLabelToLabel[axisLabel] {
+                label = existingLabel
+            } else {
+                label = dequeueLabelForAxisLabel(axisLabel)
+                axisLabelToLabel[axisLabel] = label
+                addSubview(label)
+            }
+            
+            let centerY = bounds.size.height / 2
+            let labelCenter = CGPoint(x: axisLabel.xPosition - offset, y: centerY)
+            label.center = labelCenter
+            
+            //Need to set the offset of the labels
+
+            if let myPreviousLabelPosition = previousLabelPosition {
+                //If the frames don't intersect, add the label
+                if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) &&
+                    CGRectContainsRect(self.bounds, label.frame) {
+                    addSubview(label)
+                    previousLabelPosition = label.frame
+                }
+            } else {
+                if CGRectContainsRect(self.bounds, label.frame) {
+                    addSubview(label)
+                    previousLabelPosition = label.frame
+                }
+            }
+            
+        }
+    }
+    
+    private func visibleLabelsForOffset(offset: CGFloat) -> [XAxisLabel] {
+        //TODO: Still need to account for the width of the label
+        let minVisibleXAxisPosition = 0 + offset
+        
+        let maxVisibleXAxisPosition = bounds.size.width + offset
+        
+        let newAxisLabels = axisLabels.filter {
+            let frameForLabel = labelSizes[$0]! //TODO: Don't force unwrap
+            let labelWidth = frameForLabel.size.width
+            
+            let labelLeftXAxisPosition = $0.xPosition - (labelWidth / 2)
+            
+            return labelLeftXAxisPosition > minVisibleXAxisPosition && labelLeftXAxisPosition < maxVisibleXAxisPosition
+        }
+        
+        
+        return newAxisLabels
+    }
+    
+    func dequeueLabelForAxisLabel(axisLabel: XAxisLabel) -> UILabel {
+        let label: UILabel
+        if labelQueue.count > 0 {
+            label = labelQueue.removeFirst()
+        } else {
+            label = newUILabelForAxisLabel()
+        }
+
+        let centerY = bounds.size.height / 2
+        label.text = axisLabel.text
+        let labelFrame = labelSizes[axisLabel]!
+        label.bounds = labelFrame
+        let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
+        label.center = labelCenter
+        return label
+    }
+    
+    func newUILabelForAxisLabel() -> UILabel {
+        let label = UILabel()
+        label.textAlignment = .Center
+        label.numberOfLines = 0
+        label.font = font
+        label.textColor = textColor
+        
+        return label
     }
     
     override public func sizeThatFits(size: CGSize) -> CGSize {
         layoutIfNeeded()
-        var size: CGSize = CGSizeZero
-        for label in labels {
-            let labelSize = label.bounds.size
-            size = size.height > labelSize.height ? size : labelSize
-        }
-        return CGSize(width: bounds.size.width, height: size.height)
+        return CGSize(width: bounds.size.width, height: maxLabelHeight)
     }
 }

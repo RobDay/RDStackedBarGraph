@@ -24,7 +24,7 @@ class PlotZoneView: UIView {
     var barCornerRadius: CGFloat = 0
     var stackedBarAlignment = PlotZoneView.DefaultStackedBarAlignment
     
-    var initialOffset: CGFloat = 200
+    var initialOffset: CGFloat = 0.0 //TODO: This can't be hardcoded
     var offset: CGFloat = 0.0 {
         didSet {
             //When the offset is changed, shift the bars that are visible

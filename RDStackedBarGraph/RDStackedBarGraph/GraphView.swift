@@ -155,20 +155,23 @@ public class GraphView: UIScrollView {
     }
     
     func setupXAxisWithAxisLabel(axisLabels: [XAxisLabel]) {
-        //        xAxisView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: CGFloat.max)
-        //
-        //        xAxisView.axisLabels = axisLabels
-        //        xAxisView.font = xAxisLabelFont
-        //        xAxisView.textColor = xAxisLabelColor
-        //
-        //        xAxisView.sizeToFit()
-        //        let xAxisHeight = xAxisView.bounds.size.height + xAxisTopPadding
-        //
-        //        let newXAxisFrame = CGRect(x: 0, y: bounds.size.height - xAxisHeight, width: bounds.size.width, height: xAxisHeight)
-        //        xAxisView.frame = newXAxisFrame
-        //        if xAxisView.superview == nil {
-        //            addSubview(xAxisView)
-        //        }
+        xAxisView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: CGFloat.max)
+
+        xAxisView.axisLabels = axisLabels
+        xAxisView.font = xAxisLabelFont
+        xAxisView.textColor = xAxisLabelColor
+        xAxisView.offset = contentOffset.x
+        xAxisView.sizeToFit()
+        
+        
+        let xAxisHeight = xAxisView.bounds.size.height + xAxisTopPadding
+
+        var newXAxisFrame = CGRect(x: 0, y: bounds.size.height - xAxisHeight, width: bounds.size.width, height: xAxisHeight)
+        newXAxisFrame.origin.x = contentOffset.x
+        xAxisView.frame = newXAxisFrame
+        if xAxisView.superview == nil {
+            addSubview(xAxisView)
+        }
     }
     
     func setupPlotZoneWithBars(bars: [Bar], frame: CGRect, maxBarValue: CGFloat) {
