@@ -23,12 +23,7 @@ class PlotZoneView: UIView {
     }
     var barCornerRadius: CGFloat = 0
     var stackedBarAlignment = PlotZoneView.DefaultStackedBarAlignment
-    
-    var offset: CGFloat = 0.0 {
-        didSet {
-            //When the offset is changed, shift the bars that are visible
-        }
-    }
+
     
     private var barToBarViews = [Bar: StackedBarView]()
     private var stackedBarViewQueue = [StackedBarView]()
@@ -47,7 +42,7 @@ class PlotZoneView: UIView {
 
         
         let height = bounds.size.height
-        let newVisibleBars = visibleBarsForOffset(offset)
+        let newVisibleBars = visibleBars()
         let newVisibleBarsSet = Set(newVisibleBars)
         let existingBars = Set(barToBarViews.keys)
         
@@ -70,9 +65,7 @@ class PlotZoneView: UIView {
             
 //            The x axis math below is placing the bar on the right side of the graph
 //            This could potentially be a preprocessing step on each bar?
-            var xPosition = bar.xAxisPosition - (bar.width / 2)
-            
-            xPosition -= (offset)
+            let xPosition = bar.xAxisPosition - (bar.width / 2)
             
             let barFrame = CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight)
             
@@ -108,12 +101,12 @@ class PlotZoneView: UIView {
         
     }
     
-    private func visibleBarsForOffset(currentOffset: CGFloat) -> [Bar] {
+    private func visibleBars() -> [Bar] {
 
         let barWidth = bars[0].width
-        let minVisibleXAxisPosition = 0 + currentOffset - (barWidth / 2)
+        let minVisibleXAxisPosition = 0 - (barWidth / 2)
         
-        let maxVisibleXAxisPosition = bounds.size.width + currentOffset + (barWidth / 2)
+        let maxVisibleXAxisPosition = bounds.size.width + (barWidth / 2)
         let newBars = bars.filter {
             return $0.xAxisPosition > minVisibleXAxisPosition && $0.xAxisPosition < maxVisibleXAxisPosition
         }

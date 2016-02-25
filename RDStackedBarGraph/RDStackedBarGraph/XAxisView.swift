@@ -29,7 +29,6 @@ public class XAxisView : UIView {
     
     var labelSizes : [XAxisLabel: CGRect]!
     var maxLabelHeight : CGFloat = 0
-    var offset: CGFloat = 0
     var axisLabels : [XAxisLabel]! {
         didSet {
             guard let axisLabels = axisLabels else { return }
@@ -69,9 +68,10 @@ public class XAxisView : UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         guard let axisLabels = axisLabels else { return }
-
+        clipsToBounds = true
+        
         let existingLabels = Set (axisLabelToLabel.keys)
-        let newVisibleLabels = visibleLabelsForOffset(offset)
+        let newVisibleLabels = visibleLabels()
         let newVisibleLabelsSet = Set(newVisibleLabels)
         
         let removedLabels = existingLabels.subtract(newVisibleLabelsSet)
@@ -101,10 +101,9 @@ public class XAxisView : UIView {
             }
             
             let centerY = bounds.size.height / 2
-            let labelCenter = CGPoint(x: axisLabel.xPosition - offset, y: centerY)
+            let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
             label.center = labelCenter
             
-            //Need to set the offset of the labels
 
             if let myPreviousLabelPosition = previousLabelPosition {
                 //If the frames don't intersect, add the label
@@ -123,11 +122,11 @@ public class XAxisView : UIView {
         }
     }
     
-    private func visibleLabelsForOffset(offset: CGFloat) -> [XAxisLabel] {
+    private func visibleLabels() -> [XAxisLabel] {
         //TODO: Still need to account for the width of the label
-        let minVisibleXAxisPosition = 0 + offset
+        let minVisibleXAxisPosition = CGFloat(0)
         
-        let maxVisibleXAxisPosition = bounds.size.width + offset
+        let maxVisibleXAxisPosition = bounds.size.width
         
         let newAxisLabels = axisLabels.filter {
             let frameForLabel = labelSizes[$0]! //TODO: Don't force unwrap

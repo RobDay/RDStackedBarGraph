@@ -60,6 +60,7 @@ public class GraphView: UIScrollView {
     
     private var plotZone = PlotZoneView()
     
+
     override public func layoutSubviews() {
         super.layoutSubviews()
         
@@ -91,14 +92,22 @@ public class GraphView: UIScrollView {
             contentSize = size
             initialLaunchComplete = true
             self.showsHorizontalScrollIndicator = true
-
+            
+            //Make the view right aligned
             initialOffset = cumumlativeWidth - bounds.width
             contentOffset.x = initialOffset
-//            plotZone.initialOffset = contentOffset.x
         }
-
-        let bars = barsAndLabels.bars
-        let xAxisLabels = barsAndLabels.xAxisLabels
+        
+        
+        let oldBars = barsAndLabels.bars
+        let bars = oldBars.map {
+            return Bar(segments: $0.segments, width: $0.width, xAxisPosition: $0.xAxisPosition - contentOffset.x)
+        }
+        let oldxAxisLabels = barsAndLabels.xAxisLabels
+        let xAxisLabels = oldxAxisLabels.map {
+            return XAxisLabel(text: $0.text, xPosition: $0.xPosition - contentOffset.x)
+        }
+        
         let maxBarValue = barsAndLabels.maxBarValue
         
         setupXAxisWithAxisLabel(xAxisLabels)
@@ -155,7 +164,7 @@ public class GraphView: UIScrollView {
         xAxisView.axisLabels = axisLabels
         xAxisView.font = xAxisLabelFont
         xAxisView.textColor = xAxisLabelColor
-        xAxisView.offset = contentOffset.x
+//        xAxisView.offset = contentOffset.x
         xAxisView.sizeToFit()
         
         
@@ -178,7 +187,6 @@ public class GraphView: UIScrollView {
         plotZone.bars = bars
         plotZone.maxBarValue = maxBarValue
         plotZone.barCornerRadius = barCornerRadius
-        plotZone.offset = contentOffset.x
         
         if plotZone.superview == nil {
             addSubview(plotZone)

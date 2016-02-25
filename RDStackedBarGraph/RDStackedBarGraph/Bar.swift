@@ -10,8 +10,7 @@ import Foundation
 
 struct Bar: Hashable {
     var hashValue: Int {
-        //TODO: Come up with a better hash value
-        return totalValue().hashValue
+        return width.hashValue ^ xAxisPosition.hashValue
     }
     let segments: [BarSegment]
     let width: CGFloat
