@@ -61,10 +61,8 @@ public class XAxisView : UIView {
     private var axisLabelToLabel = [XAxisLabel: UILabel]()
     
     private var labelQueue = [UILabel]()
-//    You are now goiunug to make this dequeue and requeue labels
-//    also have ot make it shift them based on the offset
-//    perhaps it's better for graph view to mutate the xAxisPositions instead of having this
-//    be responsible....it keeps that nonsense hiddden out of these classes'
+
+    
     override public func layoutSubviews() {
         super.layoutSubviews()
         guard let axisLabels = axisLabels else { return }
@@ -106,9 +104,8 @@ public class XAxisView : UIView {
             
 
             if let myPreviousLabelPosition = previousLabelPosition {
-                //If the frames don't intersect, add the label
-                if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) &&
-                    CGRectContainsRect(self.bounds, label.frame) {
+                //If the frames don't intersect, add the label                
+                if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) && CGRectContainsRect(self.bounds, label.frame) {
                     addSubview(label)
                     previousLabelPosition = label.frame
                 }
@@ -133,8 +130,9 @@ public class XAxisView : UIView {
             let labelWidth = frameForLabel.size.width
             
             let labelLeftXAxisPosition = $0.xPosition - (labelWidth / 2)
+            let labelRightXAxisPosition = $0.xPosition + (labelWidth / 2)
             
-            return labelLeftXAxisPosition > minVisibleXAxisPosition && labelLeftXAxisPosition < maxVisibleXAxisPosition
+            return labelRightXAxisPosition > minVisibleXAxisPosition && labelLeftXAxisPosition < maxVisibleXAxisPosition
         }
         
         

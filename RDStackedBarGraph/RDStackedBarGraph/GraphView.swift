@@ -99,6 +99,8 @@ public class GraphView: UIScrollView {
         }
         
         
+        
+        // IF the below two loops are deemed too inefficient, PlotView and XAxisView can perform the offset operations in their normal loops (BUT GROSS CODE IT PRODUCES)
         let oldBars = barsAndLabels.bars
         let bars = oldBars.map {
             return Bar(segments: $0.segments, width: $0.width, xAxisPosition: $0.xAxisPosition - contentOffset.x)

@@ -102,7 +102,7 @@ class PlotZoneView: UIView {
     }
     
     private func visibleBars() -> [Bar] {
-
+        guard bars.count > 0 else { return [Bar]() }
         let barWidth = bars[0].width
         let minVisibleXAxisPosition = 0 - (barWidth / 2)
         
