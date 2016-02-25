@@ -62,11 +62,6 @@ public class GraphView: UIScrollView {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        //Problems to solve:
-        // Running on a 6 plus causes a resize to happen after the first call to layout subviews
-        // We reset many properties on the plotzone each layout
-        // we remove all subviews each layout
-        
         
         guard let datasource = datasource else { return }
         
@@ -96,10 +91,10 @@ public class GraphView: UIScrollView {
             contentSize = size
             initialLaunchComplete = true
             self.showsHorizontalScrollIndicator = true
-            print("Setting offset")
+
             initialOffset = cumumlativeWidth - bounds.width
             contentOffset.x = initialOffset
-            plotZone.initialOffset = contentOffset.x
+//            plotZone.initialOffset = contentOffset.x
         }
 
         let bars = barsAndLabels.bars
@@ -175,11 +170,6 @@ public class GraphView: UIScrollView {
     }
     
     func setupPlotZoneWithBars(bars: [Bar], frame: CGRect, maxBarValue: CGFloat) {
-        //        if let _ = self.plotZone {
-        ////            return
-        //        }
-        //At this point, we have all the necessary value to build the other components
-        //        let plotZone = PlotZoneView(frame: frame, bars: bars, maxBarValue: maxBarValue)
         
         var newFrame = frame
         newFrame.origin.x = contentOffset.x
@@ -188,29 +178,14 @@ public class GraphView: UIScrollView {
         plotZone.bars = bars
         plotZone.maxBarValue = maxBarValue
         plotZone.barCornerRadius = barCornerRadius
-        plotZone.offset = plotZone.initialOffset - contentOffset.x
+        plotZone.offset = contentOffset.x
         
-        //        }
         if plotZone.superview == nil {
             addSubview(plotZone)
         }
         plotZone.setNeedsDisplay()
         
     }
-    
-    
-    
-    //    override public var contentOffset: CGPoint {
-    //        didSet {
-    ////        print("Offset is \(contentOffset)")
-    //            var frame = plotZone.frame
-    //            frame.origin.x = contentOffset.x
-    ////            plotZone.frame = frame
-    //
-    ////            print("Frame is \(plotZone.frame)")
-    //
-    //        }
-    //    }
     
 }
 

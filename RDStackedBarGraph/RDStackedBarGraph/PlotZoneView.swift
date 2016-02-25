@@ -24,7 +24,6 @@ class PlotZoneView: UIView {
     var barCornerRadius: CGFloat = 0
     var stackedBarAlignment = PlotZoneView.DefaultStackedBarAlignment
     
-    var initialOffset: CGFloat = 0.0 //TODO: This can't be hardcoded
     var offset: CGFloat = 0.0 {
         didSet {
             //When the offset is changed, shift the bars that are visible
@@ -48,8 +47,7 @@ class PlotZoneView: UIView {
 
         
         let height = bounds.size.height
-        let currentOffset = initialOffset - offset
-        let newVisibleBars = visibleBarsForOffset(currentOffset)
+        let newVisibleBars = visibleBarsForOffset(offset)
         let newVisibleBarsSet = Set(newVisibleBars)
         let existingBars = Set(barToBarViews.keys)
         
@@ -74,7 +72,7 @@ class PlotZoneView: UIView {
 //            This could potentially be a preprocessing step on each bar?
             var xPosition = bar.xAxisPosition - (bar.width / 2)
             
-            xPosition -= (currentOffset)
+            xPosition -= (offset)
             
             let barFrame = CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight)
             
