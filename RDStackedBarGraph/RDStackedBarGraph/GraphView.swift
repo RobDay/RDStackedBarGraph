@@ -29,7 +29,12 @@ public class GraphView: UIScrollView {
     public var xAxisTopMargin = CGFloat(0)
     public var xAxisTopPadding = CGFloat(0)
     
-    public var maxVisibleBars = 7
+    public var maxVisibleBars = 7 {
+        didSet {
+            xAxisView.maxVisibleLabels = maxVisibleBars
+            plotZone.maxVisibleBars = maxVisibleBars
+        }
+    }
     
     // Customizations
     public var xAxisLabelFont = UIFont.systemFontOfSize(12)
@@ -46,12 +51,12 @@ public class GraphView: UIScrollView {
             plotZone.stackedBarAlignment = newValue
         }
     }
-    
+    private var totalBars = 0
     public weak var datasource: GraphDatasourceProtocol? {
         didSet {
             guard let datasource = datasource else { return }
+            totalBars = datasource.numberOfBarsInGraphView(self)
             //TODO: totalBars needs to move
-            let totalBars = datasource.numberOfBarsInGraphView(self)
             barsAndLabels = barsAndLabelsForBarCount(totalBars)
             self.setNeedsLayout()
             self.layoutIfNeeded()
@@ -59,30 +64,28 @@ public class GraphView: UIScrollView {
     }
     
     private var plotZone = PlotZoneView()
+    private var visibleBars: Int {
+        return min(totalBars, maxVisibleBars)
+    }
     
+    private var totalWidth : CGFloat {
+        return barWidth * CGFloat(visibleBars)
+    }
 
+    private var padding: CGFloat {
+        return (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
+    }
     override public func layoutSubviews() {
         super.layoutSubviews()
         
-        guard let datasource = datasource else { return }
+        guard datasource != nil else { return }
         
         
         /*
         Collect data from the datasource and populate a local model to pass around
         */
-        let totalBars = datasource.numberOfBarsInGraphView(self)
-        
-        //        var bars = [Bar]()
-        
-        let visibleBars = min(totalBars, maxVisibleBars)
-        
-        let totalWidth = barWidth * CGFloat(visibleBars)
-        
-        
-        let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
-        
-        
-        var initialOffset : CGFloat = 0
+    
+
         if !initialLaunchComplete {
             
             let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + barWidth
@@ -94,8 +97,7 @@ public class GraphView: UIScrollView {
             self.showsHorizontalScrollIndicator = true
             
             //Make the view right aligned
-            initialOffset = cumumlativeWidth - bounds.width
-            contentOffset.x = initialOffset
+            contentOffset.x = cumumlativeWidth - bounds.width
         }
         
         
@@ -122,11 +124,7 @@ public class GraphView: UIScrollView {
     private func barsAndLabelsForBarCount(barCount: Int) -> (bars: [Bar], xAxisLabels: [XAxisLabel], maxBarValue: CGFloat) {
         guard let datasource = datasource else { return (bars: [Bar](), xAxisLabels: [XAxisLabel](), maxBarValue:  0) }
         var maxBarValue = CGFloat(0)
-        let visibleBars = min(barCount, maxVisibleBars)
-        let totalWidth = barWidth * CGFloat(visibleBars)
-        let padding = (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
         var xPosition = leftPadding + padding + barWidth / 2
-        //TODO: Come back here to account for initial offset
     
         var xAxisLabels = [XAxisLabel]()
         
@@ -166,7 +164,6 @@ public class GraphView: UIScrollView {
         xAxisView.axisLabels = axisLabels
         xAxisView.font = xAxisLabelFont
         xAxisView.textColor = xAxisLabelColor
-//        xAxisView.offset = contentOffset.x
         xAxisView.sizeToFit()
         
         

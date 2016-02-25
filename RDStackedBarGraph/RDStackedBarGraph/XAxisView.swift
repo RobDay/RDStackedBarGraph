@@ -39,7 +39,6 @@ public class XAxisView : UIView {
             }
             
             labelSizes = [XAxisLabel: CGRect]()
-            
             maxLabelHeight = 0
             for axisLabel in axisLabels {
                 let label = UILabel()
@@ -65,7 +64,7 @@ public class XAxisView : UIView {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        guard let axisLabels = axisLabels else { return }
+        guard axisLabels != nil else { return }
         clipsToBounds = true
         
         let existingLabels = Set (axisLabelToLabel.keys)
@@ -120,13 +119,12 @@ public class XAxisView : UIView {
     }
     
     private func visibleLabels() -> [XAxisLabel] {
-        //TODO: Still need to account for the width of the label
         let minVisibleXAxisPosition = CGFloat(0)
         
         let maxVisibleXAxisPosition = bounds.size.width
         
         let newAxisLabels = axisLabels.filter {
-            let frameForLabel = labelSizes[$0]! //TODO: Don't force unwrap
+            guard let frameForLabel = labelSizes[$0] else { return false }
             let labelWidth = frameForLabel.size.width
             
             let labelLeftXAxisPosition = $0.xPosition - (labelWidth / 2)
@@ -139,7 +137,7 @@ public class XAxisView : UIView {
         return newAxisLabels
     }
     
-    func dequeueLabelForAxisLabel(axisLabel: XAxisLabel) -> UILabel {
+    private func dequeueLabelForAxisLabel(axisLabel: XAxisLabel) -> UILabel {
         let label: UILabel
         if labelQueue.count > 0 {
             label = labelQueue.removeFirst()
@@ -147,16 +145,14 @@ public class XAxisView : UIView {
             label = newUILabelForAxisLabel()
         }
 
-        let centerY = bounds.size.height / 2
         label.text = axisLabel.text
-        let labelFrame = labelSizes[axisLabel]!
-        label.bounds = labelFrame
-        let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
-        label.center = labelCenter
+        guard let frameForLabel = labelSizes[axisLabel] else { return label }
+
+        label.bounds = frameForLabel
         return label
     }
     
-    func newUILabelForAxisLabel() -> UILabel {
+    private func newUILabelForAxisLabel() -> UILabel {
         let label = UILabel()
         label.textAlignment = .Center
         label.numberOfLines = 0
