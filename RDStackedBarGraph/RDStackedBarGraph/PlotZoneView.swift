@@ -49,12 +49,6 @@ class PlotZoneView: UIView {
         
         let height = bounds.size.height
         let currentOffset = initialOffset - offset
-//        print("Current offset is \(currentOffset)")
-//        print("Initial offset is \(initialOffset)")
-//        print("Offset is \(offset)")
-        
-        
-        
         let newVisibleBars = visibleBarsForOffset(currentOffset)
         let newVisibleBarsSet = Set(newVisibleBars)
         let existingBars = Set(barToBarViews.keys)
@@ -74,9 +68,7 @@ class PlotZoneView: UIView {
         
         
         for bar in newVisibleBars {
-            
             let barHeight = maxBarValue > 0 ? bar.totalValue() / maxBarValue * height : 0.0
-            
             
 //            The x axis math below is placing the bar on the right side of the graph
 //            This could potentially be a preprocessing step on each bar?

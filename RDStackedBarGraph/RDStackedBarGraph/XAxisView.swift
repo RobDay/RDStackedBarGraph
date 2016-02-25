@@ -17,8 +17,11 @@ public class XAxisView : UIView {
     var font = UIFont.systemFontOfSize(12)
     var textColor = UIColor.blackColor()
     
+    
+    var labelSizes : [CGRect]!
     var axisLabels : [XAxisLabel]? {
         didSet {
+            guard let axisLabels = axisLabels else { return }
             setNeedsLayout()
         }
     }
