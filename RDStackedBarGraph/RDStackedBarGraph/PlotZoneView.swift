@@ -23,7 +23,11 @@ class PlotZoneView: UIView {
     }
     var barCornerRadius: CGFloat = 0
     var stackedBarAlignment = PlotZoneView.DefaultStackedBarAlignment
-
+    var offset: CGFloat = 0 {
+        didSet {
+            setNeedsLayout()
+        }
+    }
     
     private var barToBarViews = [Bar: StackedBarView]()
     private var stackedBarViewQueue = [StackedBarView]()
@@ -66,7 +70,7 @@ class PlotZoneView: UIView {
 //            This could potentially be a preprocessing step on each bar?
             let xPosition = bar.xAxisPosition - (bar.width / 2)
             
-            let barFrame = CGRect(x: xPosition, y: height - barHeight, width: bar.width, height: barHeight)
+            let barFrame = CGRect(x: xPosition - offset, y: height - barHeight, width: bar.width, height: barHeight)
             
             let stackedBarView: StackedBarView
             if let existingStackedBarView = barToBarViews[bar] {
@@ -103,9 +107,9 @@ class PlotZoneView: UIView {
     private func visibleBars() -> [Bar] {
         guard bars.count > 0 else { return [Bar]() }
         let barWidth = bars[0].width
-        let minVisibleXAxisPosition = 0 - (barWidth / 2)
+        let minVisibleXAxisPosition = 0 - (barWidth / 2) + offset
         
-        let maxVisibleXAxisPosition = bounds.size.width + (barWidth / 2)
+        let maxVisibleXAxisPosition = bounds.size.width + (barWidth / 2) + offset
         let newBars = bars.filter {
             return $0.xAxisPosition > minVisibleXAxisPosition && $0.xAxisPosition < maxVisibleXAxisPosition
         }

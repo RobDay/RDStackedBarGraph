@@ -58,6 +58,15 @@ public class XAxisView : UIView {
             setNeedsLayout()
         }
     }
+    
+    var offset: CGFloat = 0 {
+        didSet {
+            if oldValue != offset {
+                setNeedsLayout()
+            }
+        }
+    }
+    
     private var axisLabelToLabel = [XAxisLabel: UILabel]()
     
     private var labelQueue = [UILabel]()
@@ -96,11 +105,10 @@ public class XAxisView : UIView {
             } else {
                 label = dequeueLabelForAxisLabel(axisLabel)
                 axisLabelToLabel[axisLabel] = label
-//                addSubview(label)
             }
             
             let centerY = bounds.size.height / 2
-            let labelCenter = CGPoint(x: axisLabel.xPosition, y: centerY)
+            let labelCenter = CGPoint(x: axisLabel.xPosition - offset, y: centerY)
             label.center = labelCenter
             
 
@@ -130,8 +138,8 @@ public class XAxisView : UIView {
             guard let frameForLabel = labelSizes[$0] else { return false }
             let labelWidth = frameForLabel.size.width
             
-            let labelLeftXAxisPosition = $0.xPosition - (labelWidth / 2)
-            let labelRightXAxisPosition = $0.xPosition + (labelWidth / 2)
+            let labelLeftXAxisPosition = $0.xPosition - offset - (labelWidth / 2)
+            let labelRightXAxisPosition = $0.xPosition - offset + (labelWidth / 2)
             
             return labelRightXAxisPosition > minVisibleXAxisPosition && labelLeftXAxisPosition < maxVisibleXAxisPosition
         }

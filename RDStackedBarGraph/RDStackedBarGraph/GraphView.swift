@@ -39,7 +39,6 @@ public class GraphView: UIScrollView {
     
     // Customizations
     
-    private var previousRect = CGRectZero
     
     public var xAxisLabelFont = UIFont.systemFontOfSize(12)
     public var xAxisLabelColor = UIColor.blackColor()
@@ -56,12 +55,7 @@ public class GraphView: UIScrollView {
         }
     }
     private var totalBars = 0
-    public weak var datasource: GraphDatasourceProtocol? {
-        didSet {
-//            self.setNeedsLayout()
-//            self.layoutIfNeeded()
-        }
-    }
+    public weak var datasource: GraphDatasourceProtocol?
     
     private var plotZone = PlotZoneView()
     private var visibleBars: Int {
@@ -80,6 +74,9 @@ public class GraphView: UIScrollView {
             return (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
         }
     }
+    
+    private var setupDone = false
+    
 
     override public func layoutSubviews() {
         super.layoutSubviews()
@@ -87,32 +84,14 @@ public class GraphView: UIScrollView {
         guard datasource != nil else { return }
 
         //Layout subviews gets called multiple times before the view appears on screen
-        //It doesn't get called with its final frame until the last call.
-        //Additionally, we want to regenerate the datapoints and spacing when the user rotates the device
-        if previousRect != frame {
+        // We only want to ask for data once, so we'll track that
+        if !setupDone {
+            setupDone = true
             reloadData()
-            let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + rightPadding
-            
-            var size = bounds.size
-            size.width = cumumlativeWidth
-            contentSize = size
-            self.showsHorizontalScrollIndicator = true
-            
-            //Make the view right aligned
-            contentOffset.x = cumumlativeWidth - bounds.width
-            previousRect = frame
         }
         
-        // IF the below two loops are deemed too inefficient, PlotView and XAxisView can perform the offset operations in their normal loops (BUT GROSS CODE IT PRODUCES)
-        let oldBars = barsAndLabels.bars
-        let bars = oldBars.enumerate().map { (index, bar) in
-            return Bar(uniqueIdentifier: index, segments: bar.segments, width: bar.width, xAxisPosition: bar.xAxisPosition - contentOffset.x)
-        }
-        let oldxAxisLabels = barsAndLabels.xAxisLabels
-        let xAxisLabels = oldxAxisLabels.enumerate().map { (index, axisLabel) in
-            return XAxisLabel(uniqueIdentifier: index, text: axisLabel.text, xPosition: axisLabel.xPosition - contentOffset.x)
-        }
-        
+        let bars = barsAndLabels.bars
+        let xAxisLabels = barsAndLabels.xAxisLabels
         let maxBarValue = barsAndLabels.maxBarValue
         
         setupXAxisWithAxisLabel(xAxisLabels)
@@ -126,6 +105,15 @@ public class GraphView: UIScrollView {
         guard let datasource = datasource else { return }
         totalBars = datasource.numberOfBarsInGraphView(self)
          barsAndLabels = barsAndLabelsForBarCount(totalBars)
+        
+        let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + rightPadding
+        
+        var size = bounds.size
+        size.width = cumumlativeWidth
+        contentSize = size
+        self.showsHorizontalScrollIndicator = true
+        //Make the view right aligned
+        contentOffset.x = cumumlativeWidth - bounds.width
         
     }
     
@@ -172,6 +160,7 @@ public class GraphView: UIScrollView {
         xAxisView.axisLabels = axisLabels
         xAxisView.font = xAxisLabelFont
         xAxisView.textColor = xAxisLabelColor
+        xAxisView.offset = contentOffset.x
         xAxisView.sizeToFit()
         
         if xAxisView.superview == nil {
@@ -197,11 +186,10 @@ public class GraphView: UIScrollView {
         plotZone.bars = bars
         plotZone.maxBarValue = maxBarValue
         plotZone.barCornerRadius = barCornerRadius
-        
+        plotZone.offset = contentOffset.x
         if plotZone.superview == nil {
             addSubview(plotZone)
         }
-//        plotZone.layoutIfNeeded()
         
     }
     
