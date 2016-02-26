@@ -33,6 +33,7 @@ class StackedBarView: UIView {
     override func drawRect(rect: CGRect) {
         super.drawRect(rect)
         layer.cornerRadius = cornerRadius
+        layer.masksToBounds = true
         var runningTotal = CGFloat(0)
         let total = segmentTotal
         //        print("Total is \(total)\n")
