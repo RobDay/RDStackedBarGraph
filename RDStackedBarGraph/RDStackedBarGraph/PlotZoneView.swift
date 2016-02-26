@@ -16,11 +16,7 @@ class PlotZoneView: UIView {
     var maxBarValue: CGFloat!
     
     var maxVisibleBars = 7
-    var bars: [Bar]! {
-        didSet {
-        setNeedsLayout()
-        }
-    }
+    var bars: [Bar]!
     var barCornerRadius: CGFloat = 0
     var stackedBarAlignment = PlotZoneView.DefaultStackedBarAlignment
     var offset: CGFloat = 0 {

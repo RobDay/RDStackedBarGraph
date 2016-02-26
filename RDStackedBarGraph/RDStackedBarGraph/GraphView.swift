@@ -30,6 +30,7 @@ public class GraphView: UIScrollView {
     public var xAxisTopMargin = CGFloat(0)
     public var xAxisTopPadding = CGFloat(0)
     public var barPadding: CGFloat?
+    public var barCornerRadius: CGFloat = 10
     
     public var maxVisibleBars = 7 {
         didSet {
@@ -38,9 +39,22 @@ public class GraphView: UIScrollView {
         }
     }
     
-    public var xAxisLabelFont = UIFont.systemFontOfSize(12)
-    public var xAxisLabelColor = UIColor.blackColor()
-    public var barCornerRadius: CGFloat = 10
+    public var xAxisLabelFont : UIFont {
+        get {
+            return xAxisView.font
+        } set {
+            xAxisView.font = newValue
+        }
+    }
+    public var xAxisLabelColor: UIColor {
+        get {
+            return xAxisView.textColor
+        } set {
+            xAxisView.textColor = newValue
+        }
+    }
+    
+    
     public let xAxisView = XAxisView()
     
     
@@ -144,11 +158,11 @@ public class GraphView: UIScrollView {
                 segments.append(segment)
             }
             
-            let bar = Bar(uniqueIdentifier: barIndex, segments: segments, width: barWidth, xAxisPosition: xPosition)
+            let bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
             bars.append(bar)
             
             if let barLabel = datasource.graphView?(self, labelForBarAtIndex: barIndex) {
-                let axisLabel = XAxisLabel(uniqueIdentifier: barIndex, text: barLabel, xPosition: xPosition)
+                let axisLabel = XAxisLabel(text: barLabel, xPosition: xPosition)
                 xAxisLabels.append(axisLabel)
             }
             
@@ -163,8 +177,6 @@ public class GraphView: UIScrollView {
         xAxisView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: CGFloat.max)
         
         xAxisView.axisLabels = axisLabels
-        xAxisView.font = xAxisLabelFont
-        xAxisView.textColor = xAxisLabelColor
         xAxisView.offset = contentOffset.x
         xAxisView.sizeToFit()
         

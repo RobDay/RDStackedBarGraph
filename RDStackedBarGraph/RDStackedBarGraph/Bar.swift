@@ -9,19 +9,18 @@
 import Foundation
 
 struct Bar: Hashable {
-    let uniqueIdentifier: Int
-    var hashValue: Int {
-        return uniqueIdentifier.hashValue
-    }
+    let hashValue: Int
     let segments: [BarSegment]
     let width: CGFloat
     let xAxisPosition: CGFloat
     
-    init(uniqueIdentifier: Int, segments: [BarSegment], width: CGFloat, xAxisPosition: CGFloat) {
+    init(segments: [BarSegment], width: CGFloat, xAxisPosition: CGFloat) {
         self.segments = segments
         self.width = width
         self.xAxisPosition = xAxisPosition
-        self.uniqueIdentifier = uniqueIdentifier
+        
+        let segmentHashValue = segments.reduce(0, combine: {$0 ^ $1.hashValue})
+        self.hashValue = width.hashValue ^ xAxisPosition.hashValue ^ segmentHashValue
     }
     
     
@@ -34,5 +33,7 @@ struct Bar: Hashable {
 }
 
 func ==(lhs: Bar, rhs: Bar) -> Bool {
-    return lhs.uniqueIdentifier == rhs.uniqueIdentifier
+    return lhs.segments == rhs.segments &&
+        lhs.width == rhs.width &&
+        lhs.xAxisPosition == rhs.xAxisPosition
 }

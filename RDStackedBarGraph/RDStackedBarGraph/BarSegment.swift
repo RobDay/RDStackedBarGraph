@@ -8,7 +8,10 @@
 
 import Foundation
 
-public struct BarSegment: Equatable {
+public struct BarSegment: Hashable {
+    public var hashValue: Int {
+        return color.hashValue ^ value.hashValue
+    }
     public let color: UIColor
     public let value: CGFloat
     public init(color: UIColor, value: CGFloat) {

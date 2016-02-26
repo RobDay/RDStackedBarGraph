@@ -10,15 +10,15 @@ import UIKit
 
 struct XAxisLabel: Hashable {
     var hashValue: Int {
-        return uniqueIdentifier.hashValue
+        return text.hashValue ^ xPosition.hashValue
     }
-    let uniqueIdentifier: Int
     let text: String
     let xPosition: CGFloat
 }
 
 func ==(lhs: XAxisLabel, rhs: XAxisLabel) -> Bool {
-    return lhs.uniqueIdentifier == rhs.uniqueIdentifier
+    return lhs.text == rhs.text &&
+        lhs.xPosition == rhs.xPosition
 }
 
 
@@ -37,8 +37,7 @@ public class XAxisView : UIView {
                 if oldValue == axisLabels {
                     return
                 }
-            }
-            
+            } 
             labelSizes = [XAxisLabel: CGRect]()
             maxLabelHeight = 0
             for axisLabel in axisLabels {
