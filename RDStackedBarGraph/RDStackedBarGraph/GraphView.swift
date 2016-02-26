@@ -88,7 +88,7 @@ public class GraphView: UIScrollView {
 
         if !initialLaunchComplete {
             
-            let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + barWidth
+            let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + rightPadding
             
             var size = bounds.size
             size.width = cumumlativeWidth
@@ -124,7 +124,7 @@ public class GraphView: UIScrollView {
     private func barsAndLabelsForBarCount(barCount: Int) -> (bars: [Bar], xAxisLabels: [XAxisLabel], maxBarValue: CGFloat) {
         guard let datasource = datasource else { return (bars: [Bar](), xAxisLabels: [XAxisLabel](), maxBarValue:  0) }
         var maxBarValue = CGFloat(0)
-        var xPosition = leftPadding + padding + barWidth / 2
+        var xPosition = leftPadding  + barWidth / 2
     
         var xAxisLabels = [XAxisLabel]()
         
