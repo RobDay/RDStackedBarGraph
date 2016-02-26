@@ -37,11 +37,13 @@ public class GraphView: UIScrollView {
     }
     
     // Customizations
+    
+    private var previousRect = CGRectZero
+    
     public var xAxisLabelFont = UIFont.systemFontOfSize(12)
     public var xAxisLabelColor = UIColor.blackColor()
     public let xAxisView = XAxisView()
     public var barCornerRadius: CGFloat = 10
-    private var initialLaunchComplete = false
     private var barsAndLabels : (bars: [Bar], xAxisLabels: [XAxisLabel], maxBarValue: CGFloat)!
     
     public var stackedBarAlignment : StackedBarAlignment {
@@ -55,9 +57,6 @@ public class GraphView: UIScrollView {
     public weak var datasource: GraphDatasourceProtocol? {
         didSet {
             guard let datasource = datasource else { return }
-            totalBars = datasource.numberOfBarsInGraphView(self)
-            //TODO: totalBars needs to move
-            barsAndLabels = barsAndLabelsForBarCount(totalBars)
             self.setNeedsLayout()
             self.layoutIfNeeded()
         }
@@ -75,32 +74,28 @@ public class GraphView: UIScrollView {
     private var padding: CGFloat {
         return (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
     }
+
     override public func layoutSubviews() {
         super.layoutSubviews()
         
         guard datasource != nil else { return }
-        
-        
-        /*
-        Collect data from the datasource and populate a local model to pass around
-        */
-    
 
-        if !initialLaunchComplete {
-            
+        //Layout subviews gets called multiple times before the view appears on screen
+        //It doesn't get called with its final frame until the last call.
+        //Additionally, we want to regenerate the datapoints and spacing when the user rotates the device
+        if previousRect != frame {
+            reloadData()
             let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + rightPadding
             
             var size = bounds.size
             size.width = cumumlativeWidth
             contentSize = size
-            initialLaunchComplete = true
             self.showsHorizontalScrollIndicator = true
             
             //Make the view right aligned
             contentOffset.x = cumumlativeWidth - bounds.width
+            previousRect = frame
         }
-        
-        
         
         // IF the below two loops are deemed too inefficient, PlotView and XAxisView can perform the offset operations in their normal loops (BUT GROSS CODE IT PRODUCES)
         let oldBars = barsAndLabels.bars
@@ -118,6 +113,13 @@ public class GraphView: UIScrollView {
         let xAxisHeight = xAxisView.bounds.size.height
         let plotZoneFrame = CGRect(x: 0, y: 0, width: bounds.size.width, height: bounds.size.height - xAxisHeight - xAxisTopMargin)
         setupPlotZoneWithBars(bars, frame: plotZoneFrame, maxBarValue: maxBarValue)
+        
+    }
+    
+    private func reloadData() {
+        guard let datasource = datasource else { return }
+        totalBars = datasource.numberOfBarsInGraphView(self)
+         barsAndLabels = barsAndLabelsForBarCount(totalBars)
         
     }
     
