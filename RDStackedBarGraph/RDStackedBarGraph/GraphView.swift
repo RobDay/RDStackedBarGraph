@@ -17,11 +17,12 @@ import UIKit
 }
 
 public enum StackedBarAlignment {
-    case Left, Center, Right
+    case Left, Right
 }
 
 public class GraphView: UIScrollView {
     
+    // Customizations
     public var barWidth = CGFloat(60)
     public var barSpacing = 20
     public var leftPadding = CGFloat(0)
@@ -37,14 +38,13 @@ public class GraphView: UIScrollView {
         }
     }
     
-    // Customizations
-    
-    
     public var xAxisLabelFont = UIFont.systemFontOfSize(12)
     public var xAxisLabelColor = UIColor.blackColor()
-
-    public let xAxisView = XAxisView()
     public var barCornerRadius: CGFloat = 10
+    public let xAxisView = XAxisView()
+    
+    
+    
     private var barsAndLabels : (bars: [Bar], xAxisLabels: [XAxisLabel], maxBarValue: CGFloat)!
     
     public var stackedBarAlignment : StackedBarAlignment {
@@ -107,13 +107,18 @@ public class GraphView: UIScrollView {
          barsAndLabels = barsAndLabelsForBarCount(totalBars)
         
         let cumumlativeWidth = barWidth * CGFloat(totalBars) + CGFloat(padding * CGFloat(totalBars - 1)) + leftPadding + rightPadding
-        
         var size = bounds.size
         size.width = cumumlativeWidth
         contentSize = size
         self.showsHorizontalScrollIndicator = true
         //Make the view right aligned
-        contentOffset.x = cumumlativeWidth - bounds.width
+        switch stackedBarAlignment {
+        case .Left:
+            break
+        case .Right:
+            contentOffset.x = cumumlativeWidth - bounds.width
+        }
+        
         
     }
     

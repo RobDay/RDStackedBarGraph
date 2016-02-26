@@ -9,7 +9,7 @@
 import UIKit
 
 class PlotZoneView: UIView {
-    static let DefaultStackedBarAlignment = StackedBarAlignment.Center
+    static let DefaultStackedBarAlignment = StackedBarAlignment.Right
     var barSpacing = 20
     var leftPadding = CGFloat(40)
     var rightPadding = CGFloat(40)
