@@ -168,7 +168,7 @@ public class XAxisView : UIView {
     }
     
     override public func sizeThatFits(size: CGSize) -> CGSize {
-        layoutIfNeeded()
+//        layoutIfNeeded()
         return CGSize(width: bounds.size.width, height: maxLabelHeight)
     }
 }

@@ -28,6 +28,7 @@ public class GraphView: UIScrollView {
     public var rightPadding = CGFloat(0)
     public var xAxisTopMargin = CGFloat(0)
     public var xAxisTopPadding = CGFloat(0)
+    public var barPadding: CGFloat?
     
     public var maxVisibleBars = 7 {
         didSet {
@@ -42,6 +43,7 @@ public class GraphView: UIScrollView {
     
     public var xAxisLabelFont = UIFont.systemFontOfSize(12)
     public var xAxisLabelColor = UIColor.blackColor()
+
     public let xAxisView = XAxisView()
     public var barCornerRadius: CGFloat = 10
     private var barsAndLabels : (bars: [Bar], xAxisLabels: [XAxisLabel], maxBarValue: CGFloat)!
@@ -56,15 +58,15 @@ public class GraphView: UIScrollView {
     private var totalBars = 0
     public weak var datasource: GraphDatasourceProtocol? {
         didSet {
-            guard let datasource = datasource else { return }
-            self.setNeedsLayout()
-            self.layoutIfNeeded()
+//            self.setNeedsLayout()
+//            self.layoutIfNeeded()
         }
     }
     
     private var plotZone = PlotZoneView()
     private var visibleBars: Int {
-        return min(totalBars, maxVisibleBars)
+        return maxVisibleBars
+//        return min(totalBars, maxVisibleBars)
     }
     
     private var totalWidth : CGFloat {
@@ -72,7 +74,11 @@ public class GraphView: UIScrollView {
     }
 
     private var padding: CGFloat {
-        return (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
+        if let barPadding = barPadding {
+            return barPadding
+        } else {
+            return (bounds.size.width - leftPadding - rightPadding - totalWidth) / CGFloat(visibleBars + 1)
+        }
     }
 
     override public func layoutSubviews() {
@@ -195,7 +201,7 @@ public class GraphView: UIScrollView {
         if plotZone.superview == nil {
             addSubview(plotZone)
         }
-        plotZone.layoutIfNeeded()
+//        plotZone.layoutIfNeeded()
         
     }
     
