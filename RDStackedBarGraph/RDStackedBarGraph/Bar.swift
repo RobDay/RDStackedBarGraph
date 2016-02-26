@@ -9,17 +9,19 @@
 import Foundation
 
 struct Bar: Hashable {
+    let uniqueIdentifier: Int
     var hashValue: Int {
-        return width.hashValue ^ xAxisPosition.hashValue
+        return uniqueIdentifier.hashValue
     }
     let segments: [BarSegment]
     let width: CGFloat
     let xAxisPosition: CGFloat
     
-    init(segments: [BarSegment], width: CGFloat, xAxisPosition: CGFloat) {
+    init(uniqueIdentifier: Int, segments: [BarSegment], width: CGFloat, xAxisPosition: CGFloat) {
         self.segments = segments
         self.width = width
         self.xAxisPosition = xAxisPosition
+        self.uniqueIdentifier = uniqueIdentifier
     }
     
     
@@ -32,11 +34,5 @@ struct Bar: Hashable {
 }
 
 func ==(lhs: Bar, rhs: Bar) -> Bool {
-    if lhs.segments == rhs.segments &&
-        lhs.width == rhs.width &&
-        lhs.xAxisPosition == rhs.xAxisPosition {
-            return true
-    } else {
-        return false
-    }
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier
 }

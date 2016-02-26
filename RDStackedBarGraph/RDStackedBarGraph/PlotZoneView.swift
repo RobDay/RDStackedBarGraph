@@ -59,7 +59,6 @@ class PlotZoneView: UIView {
             
         }
         
-        
         for bar in newVisibleBars {
             let barHeight = maxBarValue > 0 ? bar.totalValue() / maxBarValue * height : 0.0
             

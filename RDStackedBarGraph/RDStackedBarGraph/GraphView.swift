@@ -104,12 +104,12 @@ public class GraphView: UIScrollView {
         
         // IF the below two loops are deemed too inefficient, PlotView and XAxisView can perform the offset operations in their normal loops (BUT GROSS CODE IT PRODUCES)
         let oldBars = barsAndLabels.bars
-        let bars = oldBars.map {
-            return Bar(segments: $0.segments, width: $0.width, xAxisPosition: $0.xAxisPosition - contentOffset.x)
+        let bars = oldBars.enumerate().map { (index, bar) in
+            return Bar(uniqueIdentifier: index, segments: bar.segments, width: bar.width, xAxisPosition: bar.xAxisPosition - contentOffset.x)
         }
         let oldxAxisLabels = barsAndLabels.xAxisLabels
-        let xAxisLabels = oldxAxisLabels.map {
-            return XAxisLabel(text: $0.text, xPosition: $0.xPosition - contentOffset.x)
+        let xAxisLabels = oldxAxisLabels.enumerate().map { (index, axisLabel) in
+            return XAxisLabel(uniqueIdentifier: index, text: axisLabel.text, xPosition: axisLabel.xPosition - contentOffset.x)
         }
         
         let maxBarValue = barsAndLabels.maxBarValue
@@ -143,11 +143,11 @@ public class GraphView: UIScrollView {
                 segments.append(segment)
             }
             
-            let bar = Bar(segments: segments, width: barWidth, xAxisPosition: xPosition)
+            let bar = Bar(uniqueIdentifier: barIndex, segments: segments, width: barWidth, xAxisPosition: xPosition)
             bars.append(bar)
             
             if let barLabel = datasource.graphView?(self, labelForBarAtIndex: barIndex) {
-                let axisLabel = XAxisLabel(text: barLabel, xPosition: xPosition)
+                let axisLabel = XAxisLabel(uniqueIdentifier: barIndex, text: barLabel, xPosition: xPosition)
                 xAxisLabels.append(axisLabel)
             }
             
@@ -160,21 +160,24 @@ public class GraphView: UIScrollView {
     
     func setupXAxisWithAxisLabel(axisLabels: [XAxisLabel]) {
         xAxisView.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: CGFloat.max)
-
+        
         xAxisView.axisLabels = axisLabels
         xAxisView.font = xAxisLabelFont
         xAxisView.textColor = xAxisLabelColor
         xAxisView.sizeToFit()
         
-        
-        let xAxisHeight = xAxisView.bounds.size.height + xAxisTopPadding
-
-        var newXAxisFrame = CGRect(x: 0, y: bounds.size.height - xAxisHeight, width: bounds.size.width, height: xAxisHeight)
-        newXAxisFrame.origin.x = contentOffset.x
-        xAxisView.frame = newXAxisFrame
         if xAxisView.superview == nil {
             addSubview(xAxisView)
         }
+        let xAxisHeight = xAxisView.bounds.size.height + xAxisTopPadding
+        
+        var newXAxisFrame = CGRect(x: 0, y: bounds.size.height - xAxisHeight, width: bounds.size.width, height: xAxisHeight)
+        newXAxisFrame.origin.x = contentOffset.x
+        xAxisView.frame = newXAxisFrame
+        
+        
+        
+        
     }
     
     func setupPlotZoneWithBars(bars: [Bar], frame: CGRect, maxBarValue: CGFloat) {
@@ -190,7 +193,7 @@ public class GraphView: UIScrollView {
         if plotZone.superview == nil {
             addSubview(plotZone)
         }
-        plotZone.setNeedsDisplay()
+        plotZone.layoutIfNeeded()
         
     }
     

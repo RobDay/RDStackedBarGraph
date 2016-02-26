@@ -10,14 +10,15 @@ import UIKit
 
 struct XAxisLabel: Hashable {
     var hashValue: Int {
-        return text.hashValue ^ xPosition.hashValue
+        return uniqueIdentifier.hashValue
     }
+    let uniqueIdentifier: Int
     let text: String
     let xPosition: CGFloat
 }
 
 func ==(lhs: XAxisLabel, rhs: XAxisLabel) -> Bool {
-    return lhs.text == rhs.text && lhs.xPosition == rhs.xPosition
+    return lhs.uniqueIdentifier == rhs.uniqueIdentifier
 }
 
 
@@ -64,7 +65,9 @@ public class XAxisView : UIView {
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-        guard axisLabels != nil else { return }
+        guard axisLabels != nil else {
+            return
+        }
         clipsToBounds = true
         
         let existingLabels = Set (axisLabelToLabel.keys)
@@ -87,14 +90,13 @@ public class XAxisView : UIView {
 
         var previousLabelPosition: CGRect?
         for axisLabel in newVisibleLabels {
-            
             let label: UILabel
             if let existingLabel = axisLabelToLabel[axisLabel] {
                 label = existingLabel
             } else {
                 label = dequeueLabelForAxisLabel(axisLabel)
                 axisLabelToLabel[axisLabel] = label
-                addSubview(label)
+//                addSubview(label)
             }
             
             let centerY = bounds.size.height / 2
@@ -103,17 +105,18 @@ public class XAxisView : UIView {
             
 
             if let myPreviousLabelPosition = previousLabelPosition {
-                //If the frames don't intersect, add the label                
-                if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) && CGRectContainsRect(self.bounds, label.frame) {
+                //If the frames don't intersect, add the label
+                if !CGRectIntersectsRect(myPreviousLabelPosition, label.frame) && CGRectIntersectsRect(self.bounds, label.frame) {
                     addSubview(label)
                     previousLabelPosition = label.frame
                 }
             } else {
-                if CGRectContainsRect(self.bounds, label.frame) {
+                if CGRectIntersectsRect(self.bounds, label.frame) {
                     addSubview(label)
                     previousLabelPosition = label.frame
                 }
             }
+           
             
         }
     }
@@ -138,6 +141,8 @@ public class XAxisView : UIView {
     }
     
     private func dequeueLabelForAxisLabel(axisLabel: XAxisLabel) -> UILabel {
+        
+        
         let label: UILabel
         if labelQueue.count > 0 {
             label = labelQueue.removeFirst()
